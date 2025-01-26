@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Augy's place</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('https://static1.srcdn.com/wordpress/wp-content/uploads/2023/03/scream-6-ghostface-shrine-collection-victims-how.jpg');
+            background-size: cover;
+            background-position: top center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .header h1 {
+            font-family: 'Brush Script MT', cursive;
+            font-weight: bold;
+            font-size: 36px;
+            margin: 0;
+            color: red;
+        }
+
+        .dropdown {
+            margin-top: 10px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .container {
+            position: absolute;
+        }
+
+        .image {
+            text-align: center;
+            position: relative;
+        }
+
+        img {
+            max-width: 20%;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.2s ease, border 0.3s ease;
+        }
+
+        img:active {
+            transform: scale(1.2);
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(5);
+                opacity: 0;
+            }
+        }
+
+        .explode {
+            animation: explode 0.5s forwards;
+        }
+
+        .message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: red;
+            font-size: 1.5em;
+            border-radius: 50%;
+            padding: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .tear {
+            position: absolute;
+            width: 10px;
+            height: 20px;
+            background: red;
+            border-radius: 50%;
+            animation: fall 3s infinite linear;
+        }
+
+        @keyframes fall {
+            from {
+                top: -20px;
+                opacity: 1;
+            }
+            to {
+                top: 100vh;
+                opacity: 0;
+            }
+        }
+    </style>
+    <script>
+        let originalImageSrc = "https://i.imgur.com/xOB1tmX.png";
+        let newImageSrc = "https://i.imgur.com/P0eH7oX.png";
+        let currentImage = originalImageSrc;
+
+        function displayMessage(value) {
+            const message = document.querySelector('.message');
+            if (value === 'about') {
+                message.textContent = "I am a creative kid, who is good at creating my own ideas into art.";
+            } else if (value === 'favorites') {
+                message.textContent = "Lego's, Horror movies, Skater.";
+            } else {
+                message.textContent = "";
+            }
+            message.style.display = value ? 'block' : 'none';
+        }
+
+        function createTears() {
+            for (let i = 0; i < 50; i++) {
+                const tear = document.createElement('div');
+                tear.classList.add('tear');
+                tear.style.left = Math.random() * 100 + 'vw';
+                tear.style.animationDelay = Math.random() * 3 + 's';
+                tear.style.animationDuration = Math.random() * 2 + 2 + 's';
+                document.body.appendChild(tear);
+            }
+        }
+
+        function expandAndExplode(image) {
+            image.classList.add('explode');
+            setTimeout(() => {
+                image.style.display = 'none';
+                switchImage();
+            }, 500);
+        }
+
+        function switchImage() {
+            const container = document.querySelector('.container');
+            currentImage = currentImage === originalImageSrc ? newImageSrc : originalImageSrc;
+
+            setTimeout(() => {
+                const img = container.querySelector('img');
+                img.src = currentImage;
+                img.style.display = 'block';
+                img.classList.remove('explode');
+
+                // Add a bright border to highlight the image
+                img.style.border = "5px solid yellow"; // Adjust border color and width as needed
+
+                const randomTop = Math.random() * (window.innerHeight - img.offsetHeight) + 'px';
+                const randomLeft = Math.random() * (window.innerWidth - img.offsetWidth) + 'px';
+                container.style.top = randomTop;
+                container.style.left = randomLeft;
+
+                // Reset the border after a short delay for a flashy effect
+                setTimeout(() => {
+                    img.style.border = "none";
+                }, 500);
+            }, 3000);
+        }
+
+        window.onload = createTears;
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>Augy's place</h1>
+        <div class="dropdown">
+            <select onchange="displayMessage(this.value)">
+                <option value="" disabled selected>Select an option</option>
+                <option value="about">About Me</option>
+                <option value="favorites">My Favorite Things</option>
+            </select>
+        </div>
+    </div>
+    <div class="container">
+        <div class="image">
+            <img src="https://i.imgur.com/xOB1tmX.png" alt="Image" onclick="expandAndExplode(this)">
+        </div>
+    </div>
+    <div class="message"></div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
