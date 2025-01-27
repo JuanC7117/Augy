@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Augy's place</title>
+    <title>Augy's Place</title>
     <style>
+        /* General Styles */
         body {
             margin: 0;
             padding: 0;
@@ -19,10 +20,12 @@
             overflow: hidden;
         }
 
+        /* Header Styles */
         .header {
             position: absolute;
             top: 10px;
             left: 10px;
+            z-index: 10; /* Ensure dropdown is above other elements */
         }
 
         .header h1 {
@@ -33,11 +36,7 @@
             color: red;
         }
 
-        .dropdown {
-            margin-top: 10px;
-        }
-
-        select {
+        .dropdown select {
             padding: 10px;
             font-size: 16px;
             border-radius: 5px;
@@ -45,26 +44,52 @@
             cursor: pointer;
         }
 
+        /* Left Side Image Styles */
+        .left-image {
+            position: absolute;
+            top: 120px; /* Positioned below the dropdown */
+            left: 10px;
+            text-align: center;
+        }
+
+        .left-image img {
+            max-width: 150px; /* Adjust size as needed */
+            height: auto;
+            border-radius: 10px;
+            outline: none; /* Remove outline */
+        }
+
+        .left-image button {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 24px;
+            color: red;
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        .left-image button:hover {
+            text-decoration: underline;
+        }
+
+        /* Image Container Styles */
         .container {
             position: absolute;
         }
 
-        .image {
-            text-align: center;
-            position: relative;
-        }
-
-        img {
-            max-width: 20%;
+        .image img {
+            width: 150px; /* Fixed size */
             height: auto;
             cursor: pointer;
             transition: transform 0.2s ease, border 0.3s ease;
         }
 
-        img:active {
+        .image img:active {
             transform: scale(1.2);
         }
 
+        /* Explode Animation */
         @keyframes explode {
             0% {
                 transform: scale(1);
@@ -80,6 +105,7 @@
             animation: explode 0.5s forwards;
         }
 
+        /* Message Box Styles */
         .message {
             position: absolute;
             top: 50%;
@@ -94,6 +120,7 @@
             display: none;
         }
 
+        /* Tear Animation */
         .tear {
             position: absolute;
             width: 10px;
@@ -114,11 +141,43 @@
             }
         }
     </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <h1>Augy's Place</h1>
+        <div class="dropdown">
+            <select onchange="displayMessage(this.value); this.selectedIndex = 0;">
+                <option value="" disabled selected>Select an option</option>
+                <option value="about">About Me</option>
+                <option value="favorites">My Favorite Things</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Left Side Image -->
+    <div class="left-image">
+        <button onclick="window.location.href='https://perditastudios.itch.io/tsm'">Enter</button>
+        <img src="https://i.imgur.com/PHGXghJ.jpg" alt="Enter Image">
+    </div>
+
+    <!-- Image Container -->
+    <div class="container">
+        <div class="image">
+            <img src="https://i.imgur.com/xOB1tmX.png" alt="Clickable Image" onclick="expandAndExplode(this)">
+        </div>
+    </div>
+
+    <!-- Message Box -->
+    <div class="message"></div>
+
     <script>
-        let originalImageSrc = "https://i.imgur.com/xOB1tmX.png";
-        let newImageSrc = "https://i.imgur.com/P0eH7oX.png";
+        // Image URLs
+        const originalImageSrc = "https://i.imgur.com/xOB1tmX.png";
+        const newImageSrc = "https://i.imgur.com/P0eH7oX.png";
         let currentImage = originalImageSrc;
 
+        // Display Message Function
         function displayMessage(value) {
             const message = document.querySelector('.message');
             if (value === 'about') {
@@ -131,6 +190,7 @@
             message.style.display = value ? 'block' : 'none';
         }
 
+        // Create Falling Tears
         function createTears() {
             for (let i = 0; i < 50; i++) {
                 const tear = document.createElement('div');
@@ -142,6 +202,7 @@
             }
         }
 
+        // Explode and Switch Image
         function expandAndExplode(image) {
             image.classList.add('explode');
             setTimeout(() => {
@@ -150,6 +211,7 @@
             }, 500);
         }
 
+        // Switch Image Function
         function switchImage() {
             const container = document.querySelector('.container');
             currentImage = currentImage === originalImageSrc ? newImageSrc : originalImageSrc;
@@ -160,44 +222,39 @@
                 img.style.display = 'block';
                 img.classList.remove('explode');
 
-                // Add a bright border to highlight the image
-                img.style.border = "5px solid yellow"; // Adjust border color and width as needed
+                // Highlight the image with a border
+                img.style.border = "5px solid yellow";
 
-                const randomTop = Math.random() * (window.innerHeight - img.offsetHeight) + 'px';
-                const randomLeft = Math.random() * (window.innerWidth - img.offsetWidth) + 'px';
+                // Randomize the image position without overlapping the dropdown or left-image
+                const headerHeight = document.querySelector('.header').offsetHeight;
+                const leftImage = document.querySelector('.left-image');
+                const leftImageRect = leftImage.getBoundingClientRect();
+
+                let randomTop, randomLeft;
+                do {
+                    randomTop = Math.random() * (window.innerHeight - img.offsetHeight - headerHeight) + headerHeight + 'px';
+                    randomLeft = Math.random() * (window.innerWidth - img.offsetWidth) + 'px';
+                } while (
+                    // Check if the new position overlaps with the left-image area
+                    parseInt(randomTop) + img.offsetHeight > leftImageRect.top &&
+                    parseInt(randomTop) < leftImageRect.bottom &&
+                    parseInt(randomLeft) + img.offsetWidth > leftImageRect.left &&
+                    parseInt(randomLeft) < leftImageRect.right
+                );
+
                 container.style.top = randomTop;
                 container.style.left = randomLeft;
 
-                // Reset the border after a short delay for a flashy effect
-                setTimeout(() => {
-                    img.style.border = "none";
-                }, 500);
+                // Reset the border after a short delay
+                setTimeout(() => img.style.border = "none", 500);
             }, 3000);
         }
 
+        // Initialize Tears on Page Load
         window.onload = createTears;
     </script>
-</head>
-<body>
-    <div class="header">
-        <h1>Augy's place</h1>
-        <div class="dropdown">
-            <select onchange="displayMessage(this.value)">
-                <option value="" disabled selected>Select an option</option>
-                <option value="about">About Me</option>
-                <option value="favorites">My Favorite Things</option>
-            </select>
-        </div>
-    </div>
-    <div class="container">
-        <div class="image">
-            <img src="https://i.imgur.com/xOB1tmX.png" alt="Image" onclick="expandAndExplode(this)">
-        </div>
-    </div>
-    <div class="message"></div>
 </body>
 </html>
-
 
 
 
